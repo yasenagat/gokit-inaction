@@ -4,7 +4,17 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 	"github.com/pkg/errors"
+	"github.com/juju/ratelimit"
+	"time"
+	kitlimit "github.com/go-kit/kit/ratelimit"
+	"golang.org/x/time/rate"
+	"github.com/go-kit/kit/log"
 )
+
+const RATELIMIT = 100
+const ERRORLIMIT = 10
+
+var rateLimitBucket = ratelimit.NewBucket(time.Second, RATELIMIT)
 
 type UserEndpoint struct {
 	Login       endpoint.Endpoint
@@ -12,12 +22,12 @@ type UserEndpoint struct {
 	GetUser     endpoint.Endpoint
 }
 
-func MakeUserEndPoint(service Service) *UserEndpoint {
+func MakeEndPoint(logger log.Logger, service Service) *UserEndpoint {
 
 	return &UserEndpoint{
-		Login:       LoginEndpoint(service),
-		UpdatePhone: UpdatePhoneEndpoint(service),
-		GetUser:     GetUserEndpoint(service)}
+		Login:       NewLogginMiddelware(logger)(NewErrorLimitMiddelware()(NewRateLimitMiddelware(rateLimitBucket)(LoginEndpoint(service)))),
+		UpdatePhone: NewErrorLimitMiddelware()(NewRateLimitMiddelware(rateLimitBucket)(UpdatePhoneEndpoint(service))),
+		GetUser:     NewErrorLimitMiddelware()(NewRateLimitMiddelware(rateLimitBucket)(GetUserEndpoint(service)))}
 }
 
 func LoginEndpoint(service Service) endpoint.Endpoint {
@@ -62,5 +72,38 @@ func GetUserEndpoint(service Service) endpoint.Endpoint {
 			}
 		}
 		return UpdatePhoneRes{Code: -1, Msg: "GetUserEndpoint Error Type"}, errors.New("GetUserEndpoint Error Type")
+	}
+}
+
+func NewRateLimitMiddelware(b *ratelimit.Bucket) endpoint.Middleware {
+
+	return func(i endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+
+			if b.TakeAvailable(1) == 0 {
+				return nil, errors.New("访问限制")
+			}
+			return i(ctx, request)
+		}
+	}
+}
+
+func NewErrorLimitMiddelware() endpoint.Middleware {
+	return kitlimit.NewErroringLimiter(rate.NewLimiter(rate.Every(time.Second), ERRORLIMIT))
+}
+
+func NewDelayingLimitMiddelware() endpoint.Middleware {
+	return kitlimit.NewDelayingLimiter(rate.NewLimiter(rate.Every(time.Second), 10))
+}
+
+func NewLogginMiddelware(logger log.Logger) endpoint.Middleware {
+	return func(i endpoint.Endpoint) endpoint.Endpoint {
+
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			defer func(start time.Time) {
+				logger.Log("time", time.Since(start))
+			}(time.Now())
+			return i(ctx, request)
+		}
 	}
 }

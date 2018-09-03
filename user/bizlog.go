@@ -5,27 +5,31 @@ import (
 	"time"
 )
 
-type LogService struct {
-	Logger log.Logger
+type logService struct {
+	logger log.Logger
 	Service
 }
 
-func (ls LogService) Login(username, pwd string) (u User, e error) {
+func NewLogService(logger log.Logger, s Service) Service {
+	return &logService{logger, s}
+}
+
+func (ls logService) Login(username, pwd string) (u User, e error) {
 
 	defer func(start time.Time) {
 
-		ls.Logger.Log("method", "login", "username", username, "pwd", pwd, "user", u, "err", e, "time", time.Since(start))
+		ls.logger.Log("method", "login", "username", username, "pwd", pwd, "user", u, "err", e, "time", time.Since(start))
 
 	}(time.Now())
 
 	return ls.Service.Login(username, pwd)
 }
 
-func (ls LogService) UpdatePhone(username, phone string) (e error) {
+func (ls logService) UpdatePhone(username, phone string) (e error) {
 
 	defer func(start time.Time) {
 
-		ls.Logger.Log("method", "updatephone","username", username, "phone", phone, "err", e, "time", time.Since(start))
+		ls.logger.Log("method", "updatephone", "username", username, "phone", phone, "err", e, "time", time.Since(start))
 
 	}(time.Now())
 	return ls.Service.UpdatePhone(username, phone)

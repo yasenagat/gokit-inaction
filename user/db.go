@@ -3,9 +3,12 @@ package user
 import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"time"
+	"sync"
 )
 
 var Users = make(map[string]User, 10)
+var lock = &sync.Mutex{}
 
 func init() {
 	Users["Tom"] = User{Id: uuid.New().String(), Username: "Tom", Age: 11, Phone: "13333331111", Balance: "99", Sid: uuid.New().String(), Pwd: "123456"}
@@ -21,11 +24,12 @@ func CheckLogin(username, pwd string) (User, error) {
 			return v, nil
 		}
 	}
-
+	time.Sleep(time.Millisecond * 300)
 	return User{}, errors.New("用户名或密码错误")
 }
 
 func GetUser(username string) (User, error) {
+	time.Sleep(time.Millisecond * 200)
 	if u, ok := Users[username]; ok {
 		return u, nil
 	} else {
@@ -34,7 +38,13 @@ func GetUser(username string) (User, error) {
 }
 
 func UpdatePhone(username, phone string) error {
+	lock.Lock()
 
+	defer func() {
+		lock.Unlock()
+	}()
+
+	time.Sleep(time.Millisecond * 100)
 	user, e := GetUser(username)
 
 	if e != nil {

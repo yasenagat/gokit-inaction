@@ -1,0 +1,83 @@
+{
+  "swagger": "2.0",
+  "paths": {
+    "/login": {
+      "post": {
+        "description": "用户登录",
+        "tags": [
+          "users"
+        ],
+        "summary": "用户登录",
+        "operationId": "LoginResponseWrapper",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResponseWrapper"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LoginRes": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "$ref": "#/definitions/User"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "msg": {
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "gitee.com/godY/gokit-inaction/user"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Age"
+        },
+        "balance": {
+          "type": "string",
+          "x-go-name": "Balance"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "phone": {
+          "type": "string",
+          "x-go-name": "Phone"
+        },
+        "pwd": {
+          "type": "string",
+          "x-go-name": "Pwd"
+        },
+        "sid": {
+          "type": "string",
+          "x-go-name": "Sid"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "gitee.com/godY/gokit-inaction/user"
+    }
+  },
+  "responses": {
+    "LoginResponseWrapper": {
+      "description": "LoginRes",
+      "schema": {
+        "$ref": "#/definitions/LoginRes"
+      }
+    }
+  }
+}

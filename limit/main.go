@@ -11,11 +11,13 @@ import (
 	"github.com/pkg/errors"
 	rl "github.com/juju/ratelimit"
 	"github.com/go-kit/kit/endpoint"
+	"fmt"
 )
 
+//curl -X POST "http://localhost:8080/hello"
 func main() {
 
-	helloHandler := transporthttp.NewServer(ratelimit.NewErroringLimiter(rate.NewLimiter(rate.Every(time.Minute), 5))(func(ctx context.Context, request interface{}) (interface{}, error) {
+	helloHandler := transporthttp.NewServer(ratelimit.NewErroringLimiter(rate.NewLimiter(rate.Every(time.Second), 20))(func(ctx context.Context, request interface{}) (interface{}, error) {
 
 		if rand.Intn(10) > 5 {
 			if r, ok := request.(string); ok {
@@ -26,6 +28,21 @@ func main() {
 		} else {
 			return nil, errors.New("service error")
 		}
+
+	}), func(i context.Context, request *http.Request) (interface{}, error) {
+
+		return "hell world", nil
+	}, func(_ context.Context, writer http.ResponseWriter, i interface{}) error {
+		if r, ok := i.(string); ok {
+			writer.Write([]byte(r))
+		}
+		return nil
+	})
+
+	waitHandler := transporthttp.NewServer(ratelimit.NewDelayingLimiter(rate.NewLimiter(rate.Every(time.Second*3), 1))(func(ctx context.Context, request interface{}) (interface{}, error) {
+
+		fmt.Println(time.Now().String())
+		return "default data", nil
 
 	}), func(i context.Context, request *http.Request) (interface{}, error) {
 
@@ -57,6 +74,7 @@ func main() {
 		return nil
 	})
 	http.Handle("/hello", helloHandler)
+	http.Handle("/wait", waitHandler)
 	http.Handle("/limit", limitHandler)
 	http.ListenAndServe(":8080", nil)
 }

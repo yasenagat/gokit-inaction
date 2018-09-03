@@ -5,9 +5,10 @@ import (
 	"gitee.com/godY/gokit-inaction/user"
 	"github.com/go-kit/kit/log"
 	"os"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"encoding/json"
-	"golang.org/x/net/context"
+	"github.com/gorilla/mux"
+	"os/signal"
+	"syscall"
+	"fmt"
 )
 
 //curl -X POST "http://localhost:8080/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"Tom\", \"Pwd\": \"123456\"}"
@@ -15,6 +16,16 @@ import (
 //curl -X POST "http://localhost:8080/phone" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"Tom\", \"Phone\": \"911\"}"
 
 //curl -X POST "http://localhost:8080/user" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"Tom\"}"
+
+// Package classification User API.
+//
+// The purpose of this service is to provide an application
+// that is using plain go code to define an API
+//
+//      Host: localhost
+//      Version: 0.0.1
+//
+// swagger:meta
 func main() {
 
 	var logger log.Logger
@@ -24,38 +35,27 @@ func main() {
 	var svr user.Service
 
 	svr = user.UserService{}
-	svr = user.LogService{Logger: logger, Service: svr}
+	svr = user.NewLogService(log.With(logger, "component", "user"), svr)
+	svr = user.NewmetricsMW(svr)
 
-	userEndpoint := user.MakeUserEndPoint(svr)
+	userEndpoint := user.MakeEndPoint(logger, svr)
 
-	opts := []transporthttp.ServerOption{
-		transporthttp.ServerErrorLogger(logger),
-		transporthttp.ServerErrorEncoder(encodeError),
-	}
+	r := mux.NewRouter()
 
-	loginHandler := transporthttp.NewServer(userEndpoint.Login, user.DecodeLoginReq, user.DefaultEncodeResponse, opts...)
-	updatePhoneHandler := transporthttp.NewServer(userEndpoint.UpdatePhone, user.DecodeUpdatePhoneReq, user.DefaultEncodeResponse, opts...)
-	getUserHandler := transporthttp.NewServer(userEndpoint.GetUser, user.DecodeGetUserReq, user.DefaultEncodeResponse, opts...)
+	r = user.MakeHandler(logger, userEndpoint, r)
 
-	http.Handle("/login", loginHandler)
-	http.Handle("/phone", updatePhoneHandler)
-	http.Handle("/user", getUserHandler)
-	http.ListenAndServe(":8080", nil)
+	errc := make(chan error, 1)
 
-}
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
+		errc <- fmt.Errorf("%s", <-c)
+	}()
 
-// encode errors from business-logic
-func encodeError(_ context.Context, err error, w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	switch err {
-	//case cargo.ErrUnknown:
-	//	w.WriteHeader(http.StatusNotFound)
-	//case ErrInvalidArgument:
-	//	w.WriteHeader(http.StatusBadRequest)
-	default:
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"error": err.Error(),
-	})
+	go func() {
+		errc <- http.ListenAndServe(":8080", r)
+	}()
+
+	logger.Log("err", <-errc)
+
 }

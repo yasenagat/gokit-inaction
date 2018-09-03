@@ -1,13 +1,13 @@
 package user
 
 type User struct {
-	Id       string
-	Username string
-	Pwd      string
-	Age      int
-	Sid      string
-	Balance  string
-	Phone    string
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	Pwd      string `json:"pwd"`
+	Age      int    `json:"age"`
+	Sid      string `json:"sid"`
+	Balance  string `json:"balance"`
+	Phone    string `json:"phone"`
 }
 
 func (u User) String() string {
