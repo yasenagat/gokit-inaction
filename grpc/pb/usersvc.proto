@@ -14,6 +14,6 @@ message LoginReq {
 
 message LoginRes {
     int64 code = 1;
-    string err = 2;
+    string msg = 2;
 }
 

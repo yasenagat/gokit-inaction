@@ -22,7 +22,7 @@ func main() {
 
 	req := pb.LoginReq{}
 	req.Username = "abc"
-	req.Pwd = "abc"
+	req.Pwd = "abc123"
 
 	res, e := us.Login(context.Background(), &req)
 
@@ -32,7 +32,7 @@ func main() {
 	}
 
 	fmt.Println(res.Code)
-	fmt.Println(res.Err)
+	fmt.Println(res.Msg)
 }
 
 type UserClient struct {

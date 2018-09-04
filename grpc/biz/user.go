@@ -15,10 +15,10 @@ func (UserServer) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, er
 	fmt.Println(req.Pwd)
 	if (req.Username == "abc" && req.Pwd == "123") {
 		res.Code = 0
-		res.Err = "登录成功"
+		res.Msg = "登录成功"
 	} else {
 		res.Code = -1
-		res.Err = "登录失败"
+		res.Msg = "登录失败"
 	}
 	return &res, nil
 }

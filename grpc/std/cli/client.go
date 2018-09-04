@@ -29,5 +29,5 @@ func main() {
 	}
 
 	fmt.Println(res.Code)
-	fmt.Println(res.Err)
+	fmt.Println(res.Msg)
 }
