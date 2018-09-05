@@ -27,7 +27,7 @@ func main() {
 	errc := make(chan error)
 
 	r := mux.NewRouter()
-	svr := transporthttp.NewServer(kit.NewCbEndpoint(NewRemoteEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
+	svr := transporthttp.NewServer(kit.NewCbEndpoint("/n", NewRemoteEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
 		n := Number{}
 		e := json.NewDecoder(req.Body).Decode(&n)
 		return n, e
@@ -35,7 +35,7 @@ func main() {
 		return json.NewEncoder(writer).Encode(i)
 	})
 
-	mocksvr := transporthttp.NewServer(kit.NewCbEndpoint(NewMockEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
+	mocksvr := transporthttp.NewServer(kit.NewCbEndpoint("/mock", NewMockEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
 		n := Number{}
 		e := json.NewDecoder(req.Body).Decode(&n)
 		return n, e
@@ -46,7 +46,7 @@ func main() {
 	r.Handle("/n", svr)
 	r.Handle("/mock", mocksvr)
 	go func() {
-		log.Println("[Pre] Service Start On :8888")
+		log.Println("[Api] Service Start On :8888")
 		errc <- http.ListenAndServe(":8888", r)
 	}()
 
@@ -54,10 +54,38 @@ func main() {
 }
 
 func NewRemoteEndPoint(ctx context.Context, request interface{}) (response interface{}, err error) {
-
 	log.Println(request.(Number).N)
+	return bizN(ctx, request)
+}
 
-	parseUrl, _ := url.Parse("http://localhost:6666")
+func NewMockEndPoint(ctx context.Context, request interface{}) (response interface{}, err error) {
+
+	log.Println("mock", request.(Number).N)
+
+	if r, ok := request.(Number); ok {
+		if r.N <= 20 {
+			r.N = r.N * 2
+			return r, nil
+		}
+	}
+	return nil, errors.New("[Api] Server Error Mock")
+}
+
+func bizN(ctx context.Context, request interface{}) (Number, error) {
+
+	//模拟Api Server Error
+	if request.(Number).N < 10 {
+		return Number{}, errors.New("[Api] Server Error N")
+	}
+
+	return RemoteCall(ctx, request)
+
+}
+
+func RemoteCall(ctx context.Context, request interface{}) (Number, error) {
+
+	parseUrl, _ := url.Parse("http://localhost:7777/n2")
+
 	client := transporthttp.NewClient("POST", parseUrl, func(ctx context.Context, request *http.Request, i interface{}) error {
 		var buf bytes.Buffer
 		if err := json.NewEncoder(&buf).Encode(i); err != nil {
@@ -67,34 +95,26 @@ func NewRemoteEndPoint(ctx context.Context, request interface{}) (response inter
 		return nil
 	}, func(ctx context.Context, res *http.Response) (response interface{}, err error) {
 
+		b, e := ioutil.ReadAll(res.Body)
+
+		log.Println("b", string(b))
+		log.Println("StatusCode", res.StatusCode)
+
 		if res.StatusCode != http.StatusOK {
-			return nil, errors.New(res.Status)
+			return nil, errors.New(string(b) + " => " + res.Status)
 		}
 
-		b, e := ioutil.ReadAll(res.Body)
-		log.Println("bb", string(b))
-
-		return string(b), e
+		n := Number{}
+		e = json.Unmarshal(b, &n)
+		return n, e
 
 	})
 
-	if r, ok := request.(Number); ok {
-		r.N = r.N * 2
-		return client.Endpoint()(ctx, r)
+	ret, e := client.Endpoint()(ctx, request)
+
+	if e != nil {
+		return Number{}, e
 	}
 
-	return nil, errors.New("[Pre] Server Error")
-}
-
-func NewMockEndPoint(ctx context.Context, request interface{}) (response interface{}, err error) {
-
-	log.Println("mock", request.(Number).N)
-
-	if r, ok := request.(Number); ok {
-		if r.N < 50 {
-			r.N = r.N * 2
-			return r, nil
-		}
-	}
-	return nil, errors.New("[Pre] Server Error")
+	return ret.(Number), nil
 }
