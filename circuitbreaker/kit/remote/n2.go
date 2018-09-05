@@ -16,7 +16,7 @@ type Number struct {
 	N int
 }
 
-//curl -X POST "http://localhost:7777" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"N\": 4}"
+//curl -X POST "http://localhost:7777/n2" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"N\": 4}"
 func main() {
 
 	errc := make(chan error)

@@ -38,6 +38,16 @@
     * 监控 状态变为断开发送警告日志。
 
 
+#### 测试
+>通过下面的命令，更改N的值，测试结果。
+注意观察Api Server的`状态变化和响应内容`
+```
+$ curl -X POST "http://localhost:8888/n" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"N\": 4}"
+
+$ curl -X POST "http://localhost:8888/mock" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"N\": 4}"
+
+$ curl -X POST "http://localhost:7777/n2" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"N\": 4}"
+```
 
 
 
