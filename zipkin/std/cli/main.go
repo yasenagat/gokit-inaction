@@ -13,21 +13,22 @@ import (
 	"time"
 )
 
+var zipkinhttpurl = "http://192.168.3.125:9411/api/v1/spans"
+
 const KEYERROR = "error"
 
 func main() {
 
-	//a := serviceA{"127.0.0.0:1111", "svrA"}
-	//
-	//for i := 0; i < 10; i++ {
-	//	a.cal()
-	//}
+	a := serviceA{"127.0.0.0:1111", "svrA"}
+
+	for i := 0; i < 10; i++ {
+		a.cal()
+	}
 
 	x := serviceX{"192.168.0.0:1111", "svrX"}
 
 	for i := 0; i < 10; i++ {
 		x.call(rand.Intn(10))
-
 	}
 }
 
@@ -328,7 +329,7 @@ func (s serviceZ) createTracer() (zipkintracer.Collector, opentracing.Tracer, er
 
 func newTracer(hostPort, serviceName string) (zipkintracer.Collector, opentracing.Tracer, error) {
 	// 收集器
-	collector, err := zipkin.NewHTTPCollector("http://192.168.3.125:9411/api/v1/spans")
+	collector, err := zipkin.NewHTTPCollector(zipkinhttpurl)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -336,6 +337,7 @@ func newTracer(hostPort, serviceName string) (zipkintracer.Collector, opentracin
 	// 记录器
 	recorder := zipkin.NewRecorder(collector, true, hostPort, serviceName)
 	//log.Println(recorder)
+
 	// 追踪器
 	tracer, err := zipkin.NewTracer(
 		recorder,
@@ -353,7 +355,7 @@ func newTracer(hostPort, serviceName string) (zipkintracer.Collector, opentracin
 
 func example() {
 	// Create our HTTP collector.
-	collector, err := zipkin.NewHTTPCollector("http://192.168.3.125:9411/api/v1/spans")
+	collector, err := zipkin.NewHTTPCollector(zipkinhttpurl)
 	if err != nil {
 		fmt.Printf("unable to create Zipkin HTTP collector: %+v\n", err)
 		os.Exit(-1)

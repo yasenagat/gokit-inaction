@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package pb;
+
+service Msg {
+    rpc GetUnRead (UnReadReq) returns (UnReadRes) {
+    }
+}
+
+message UnReadReq {
+    string userid = 1;
+}
+
+message UnReadResBody {
+    int64 count = 1;
+}
+
+message UnReadRes {
+    int64 code = 1;
+    string msg = 2;
+    UnReadResBody body = 3;
+}
+
