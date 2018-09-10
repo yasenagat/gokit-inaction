@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"google.golang.org/grpc"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/user/biz"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/user"
@@ -21,16 +20,9 @@ func main() {
 
 	endpoint := user.MakeLoginEndpoint(service)
 
-	zipkinTracer := svr.NewZipkinTracer(svr.UserSvrName, svr.UserSvrAddress, svr.Zipkinhttpurl, logger)
+	svr.NewServerOptions(svr.UserSvrName, svr.UserSvrAddress, svr.Zipkinhttpurl, logger)
 
-	zipkinServer := kitzipkin.GRPCServerTrace(zipkinTracer)
-
-	options := []kitgrpc.ServerOption{
-		kitgrpc.ServerErrorLogger(logger),
-		zipkinServer,
-	}
-
-	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc, options...)
+	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc)
 
 	handler := user.Handler{LoginEndpoint: server}
 

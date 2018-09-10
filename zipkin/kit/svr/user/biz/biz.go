@@ -7,10 +7,8 @@ import (
 	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"google.golang.org/grpc"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
 	"log"
-	"github.com/go-kit/kit/tracing/opentracing"
 )
 
 type UserSvr struct {
@@ -19,7 +17,7 @@ type UserSvr struct {
 func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, error) {
 
 	res := pb.LoginRes{}
-	log.Println(req.Username, req.Pwd)
+	log.Println("req.Username", req.Username, "req.Pwd", req.Pwd)
 	if req.Username == "admin" && req.Pwd == "123" {
 		body := pb.LoginResBody{}
 		body.Userid = "1"
@@ -28,7 +26,7 @@ func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, err
 		unreadreq := pb.UnReadReq{}
 		unreadreq.Userid = body.Userid
 		unReadRes, e := GetUnRead(context.Background(), &unreadreq)
-		log.Println(unReadRes)
+
 		if e != nil {
 			fmt.Println(e)
 			body.UnreadCount = 0
@@ -36,7 +34,7 @@ func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, err
 			if unReadRes.Code == 0 {
 				body.UnreadCount = unReadRes.Body.Count
 			} else {
-				fmt.Println(unReadRes.Msg)
+				fmt.Println("unReadRes.Msg", unReadRes.Msg)
 				body.UnreadCount = 0
 			}
 		}
@@ -80,17 +78,17 @@ func (c MsgClient) GetUnRead(ctx context.Context, req *pb.UnReadReq) (*pb.UnRead
 
 func NewMsgClient(conn *grpc.ClientConn) pb.MsgServer {
 
-	logger := svr.NewLogger()
+	//logger := svr.NewLogger()
+	//
+	//zipkinTracer := svr.NewZipkinTracer(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
+	//
+	//zipkinServer := kitzipkin.GRPCClientTrace(zipkinTracer)
+	//
+	//options := []kitgrpc.ClientOption{
+	//	zipkinServer,
+	//}
 
-	zipkinTracer := svr.NewZipkinTracer(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
-
-	zipkinServer := kitzipkin.GRPCClientTrace(zipkinTracer)
-
-	options := []kitgrpc.ClientOption{
-		zipkinServer,
-	}
-
-	GetUnReadEndpoint := kitgrpc.NewClient(conn, "pb.Msg", "GetUnRead", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.UnReadRes{}, append(options,kitgrpc.ClientBefore(opentracing.ContextToGRPC(otTracer, logger)))...).Endpoint()
+	GetUnReadEndpoint := kitgrpc.NewClient(conn, "pb.Msg", "GetUnRead", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.UnReadRes{}, ).Endpoint()
 	log.Println(GetUnReadEndpoint)
 	return &MsgClient{GetUnReadEndpoint: GetUnReadEndpoint}
 }

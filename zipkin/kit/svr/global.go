@@ -5,6 +5,8 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/openzipkin/zipkin-go"
 	zipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
+	transporthttp "github.com/go-kit/kit/transport/http"
+	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
 )
 
 var MsgSvrName = "MsgSvr"
@@ -12,7 +14,7 @@ var MsgSvrAddress = ":9988"
 var UserSvrAddress = ":9977"
 var UserSvrName = "UserSvr"
 
-var Zipkinhttpurl = "http://192.168.3.125:9411/api/v1/spans"
+var Zipkinhttpurl = "http://localhost:9411/api/v1/spans"
 
 func NewLogger() log.Logger {
 	var logger log.Logger
@@ -46,4 +48,14 @@ func NewZipkinTracer(serviceName, hostPort, zipkinhttpurl string, logger log.Log
 	}
 
 	return zipkinTracer
+}
+
+func NewServerOptions(serviceName, hostPort, zipkinhttpurl string, logger log.Logger) []transporthttp.ServerOption {
+	tracer := NewZipkinTracer(serviceName, hostPort, zipkinhttpurl, logger)
+	zipkinServer := kitzipkin.HTTPServerTrace(tracer)
+	options := []transporthttp.ServerOption{
+		transporthttp.ServerErrorLogger(logger),
+		zipkinServer,
+	}
+	return options
 }

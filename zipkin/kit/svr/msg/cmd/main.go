@@ -10,7 +10,6 @@ import (
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
 )
 
 func main() {
@@ -21,21 +20,9 @@ func main() {
 
 	endpoint := msg.MakeUnReadEndpoint(service)
 
-	//_, _, e := newTracer("", "")
-	//
-	//if e != nil {
-	//
-	//}
-	zipkinTracer := svr.NewZipkinTracer(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
+	svr.NewServerOptions(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
 
-	zipkinServer := kitzipkin.GRPCServerTrace(zipkinTracer)
-
-	options := []kitgrpc.ServerOption{
-		kitgrpc.ServerErrorLogger(logger),
-		zipkinServer,
-	}
-
-	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc, append(options)...)
+	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc)
 
 	handler := msg.Handler{GetUnReadHandler: server}
 
