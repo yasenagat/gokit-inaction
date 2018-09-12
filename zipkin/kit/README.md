@@ -67,3 +67,28 @@ if span != nil {
 }
 ```
 
+####注意
+
+>业务接口中一定要带入ctx
+否则无法连接父span，也不能做业务的trace了。
+
+#### 测试
+
+>* 分别启动3个服务
+
+```shell
+$ go run kit/api/cmd/main.go
+$ go run kit/svr/user/cmd/main.go
+$ go run kit/svr/msg/cmd/main.go
+```
+
+>* curl test
+
+```
+$ curl -X POST "http://localhost:8888/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"username\": \"admin\",\"pwd\":\"123\"}"
+{"code":0,"unread":2,"msg":"登录成功","uid":"1"}
+```
+
+
+
+
