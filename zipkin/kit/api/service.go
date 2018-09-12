@@ -1,7 +1,9 @@
 package api
 
+import "golang.org/x/net/context"
+
 type Api interface {
-	Login(ReqLogin) (ResLogin, error)
+	Login(ctx context.Context, req ReqLogin) (ResLogin, error)
 }
 
 

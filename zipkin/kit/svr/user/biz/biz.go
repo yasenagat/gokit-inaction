@@ -9,10 +9,12 @@ import (
 	"google.golang.org/grpc"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
 	"github.com/go-kit/kit/log"
+	"github.com/openzipkin/zipkin-go"
 )
 
 type UserSvr struct {
-	Logger log.Logger
+	Logger    log.Logger
+	MsgClient pb.MsgServer
 }
 
 func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, error) {
@@ -26,7 +28,7 @@ func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, err
 		//call rpc start
 		unreadreq := pb.UnReadReq{}
 		unreadreq.Userid = body.Userid
-		unReadRes, e := GetUnRead(context.Background(), &unreadreq)
+		unReadRes, e := u.MsgClient.GetUnRead(ctx, &unreadreq)
 
 		if e != nil {
 			fmt.Println(e)
@@ -52,17 +54,6 @@ func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, err
 	return &res, nil
 }
 
-func GetUnRead(ctx context.Context, req *pb.UnReadReq) (*pb.UnReadRes, error) {
-
-	conn, e := grpc.Dial(svr.MsgSvrAddress, grpc.WithInsecure())
-	if e != nil {
-		fmt.Println(e)
-	}
-
-	svr := NewMsgClient(conn)
-
-	return svr.GetUnRead(ctx, req)
-}
 
 type MsgClient struct {
 	GetUnReadEndpoint endpoint.Endpoint
@@ -77,19 +68,11 @@ func (c MsgClient) GetUnRead(ctx context.Context, req *pb.UnReadReq) (*pb.UnRead
 	return res.(*pb.UnReadRes), nil
 }
 
-func NewMsgClient(conn *grpc.ClientConn) pb.MsgServer {
+func NewMsgClient(conn *grpc.ClientConn, zipkinTracer *zipkin.Tracer, logger log.Logger) pb.MsgServer {
 
-	//logger := svr.NewLogger()
-	//
-	//zipkinTracer := svr.NewZipkinTracer(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
-	//
-	//zipkinServer := kitzipkin.GRPCClientTrace(zipkinTracer)
-	//
-	//options := []kitgrpc.ClientOption{
-	//	zipkinServer,
-	//}
+	opts := svr.NewGrpcClientOptions(zipkinTracer, "",logger)
 
-	GetUnReadEndpoint := kitgrpc.NewClient(conn, "pb.Msg", "GetUnRead", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.UnReadRes{}, ).Endpoint()
+	GetUnReadEndpoint := kitgrpc.NewClient(conn, "pb.Msg", "GetUnRead", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.UnReadRes{}, opts...).Endpoint()
 
 	return &MsgClient{GetUnReadEndpoint: GetUnReadEndpoint}
 }

@@ -7,10 +7,11 @@ import (
 )
 
 type ApiSvr struct {
-	Logger log.Logger
+	Logger     log.Logger
+	UserClient pb.UserServer
 }
 
-func (svr ApiSvr) Login(req ReqLogin) (ResLogin, error) {
+func (svr ApiSvr) Login(ctx context.Context, req ReqLogin) (ResLogin, error) {
 
 	svr.Logger.Log(req.Username, req.Pwd)
 
@@ -18,21 +19,10 @@ func (svr ApiSvr) Login(req ReqLogin) (ResLogin, error) {
 
 	//call rpc start
 
-	userClient, e := NewRemote(svr.Logger).NewUserClient()
-
-	if e != nil {
-		svr.Logger.Log("error", e)
-		res.Msg = e.Error()
-		res.Code = -1
-		res.UID = "-1"
-		res.Unread = -1
-		return res, e
-	}
-
 	r := pb.LoginReq{}
 	r.Username = req.Username
 	r.Pwd = req.Pwd
-	loginRes, e := userClient.Login(context.Background(), &r)
+	loginRes, e := svr.UserClient.Login(ctx, &r)
 
 	if e != nil {
 		svr.Logger.Log("error", e)

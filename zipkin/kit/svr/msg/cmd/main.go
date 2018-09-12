@@ -10,19 +10,44 @@ import (
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
+	"github.com/openzipkin/zipkin-go"
+	openzipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
 )
 
 func main() {
 
-	//logger := svr.NewLogger("msg")
+	logger := svr.NewLogger("msg")
 
-	service := biz.MsgSvr{}
+	service := biz.MsgSvr{Logger: logger}
 
 	endpoint := msg.MakeUnReadEndpoint(service)
 
-	//svr.NewServerOptions(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
+	var zipkinTracer *zipkin.Tracer
+	{
+		var (
+			err           error
+			hostPort      = svr.MsgSvrAddress
+			serviceName   = svr.MsgSvrName
+			useNoopTracer = false
+			reporter      = openzipkinhttp.NewReporter(svr.Zipkinhttpurl)
+		)
+		defer reporter.Close()
+		zEP, _ := zipkin.NewEndpoint(serviceName, hostPort)
+		zipkinTracer, err = zipkin.NewTracer(
+			reporter, zipkin.WithLocalEndpoint(zEP), zipkin.WithNoopTracer(useNoopTracer),
+		)
+		if err != nil {
+			logger.Log("err", err)
+			os.Exit(1)
+		}
+		if !useNoopTracer {
+			logger.Log("tracer", "Zipkin", "type", "Native", "URL", svr.Zipkinhttpurl)
+		}
+	}
 
-	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc)
+	opts := svr.NewGrpcServerOptions(zipkinTracer, "", logger)
+
+	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc, opts...)
 
 	handler := msg.Handler{GetUnReadHandler: server}
 

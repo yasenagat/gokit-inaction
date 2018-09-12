@@ -4,21 +4,22 @@ import (
 	"golang.org/x/net/context"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
 	"strconv"
-	"log"
+	"github.com/go-kit/kit/log"
 )
 
 type MsgSvr struct {
+	Logger log.Logger
 }
 
 func (msg MsgSvr) GetUnRead(ctx context.Context, req *pb.UnReadReq) (*pb.UnReadRes, error) {
 
-	log.Println("req.Userid", req.Userid)
+	msg.Logger.Log("req.Userid", req.Userid)
 	res := pb.UnReadRes{}
 
 	body := pb.UnReadResBody{}
 
 	body.Count = DB[req.Userid]
-	log.Println("body.Count", body.Count)
+	msg.Logger.Log("body.Count", body.Count)
 	res.Msg = "ok"
 	res.Code = 0
 	res.Body = &body

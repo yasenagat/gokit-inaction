@@ -34,7 +34,7 @@ func EncodeRes(ctx context.Context, writer http.ResponseWriter, i interface{}) e
 		return e
 	}
 
-	writer.Write(bytes)
+	_, e = writer.Write(bytes)
 
-	return nil
+	return e
 }

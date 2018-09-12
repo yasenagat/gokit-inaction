@@ -8,14 +8,16 @@ import (
 	"golang.org/x/net/context"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"github.com/go-kit/kit/log"
+	"github.com/openzipkin/zipkin-go"
 )
 
-func NewRemote(logger log.Logger) Remote {
-	return Remote{logger}
+func NewRemote(logger log.Logger, zipkinTracer *zipkin.Tracer) Remote {
+	return Remote{logger: logger, zipkinTracer: zipkinTracer}
 }
 
 type Remote struct {
-	logger log.Logger
+	logger       log.Logger
+	zipkinTracer *zipkin.Tracer
 }
 type UserClient struct {
 	LoginEndpoint endpoint.Endpoint
@@ -30,14 +32,11 @@ func (c UserClient) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, 
 	return res.(*pb.LoginRes), nil
 }
 
-func (r Remote) NewUserClient() (pb.UserServer, error) {
+func (r Remote) NewUserClient(conn *grpc.ClientConn) (pb.UserServer) {
 
-	conn, e := grpc.Dial(svr.UserSvrAddress, grpc.WithInsecure())
-	if e != nil {
-		r.logger.Log("error", e)
-		return &UserClient{}, e
-	}
-	LoginEndpoint := kitgrpc.NewClient(conn, "pb.User", "Login", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.LoginRes{}).Endpoint()
+	opts := svr.NewGrpcClientOptions(r.zipkinTracer, "", r.logger)
 
-	return &UserClient{LoginEndpoint: LoginEndpoint}, nil
+	LoginEndpoint := kitgrpc.NewClient(conn, "pb.User", "Login", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.LoginRes{}, opts...).Endpoint()
+
+	return &UserClient{LoginEndpoint: LoginEndpoint}
 }
