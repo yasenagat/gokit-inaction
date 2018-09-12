@@ -44,6 +44,7 @@ myEndpoint = GetLock(myEndpoint)
 2. #### trace业务
 
 >如果使用了gokit的http或者grpc的trace功能，具体业务的endpoint的ctx中已经包含了span的相关信息，直接使用就可以了。
+>比如trace sql query的执行时间,cache的load时间等等。
 
 ```go
 
