@@ -9,25 +9,43 @@ import (
 	"gitee.com/godY/gokit-inaction/grpc/pb"
 	"golang.org/x/net/context"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/openzipkin/zipkin-go/reporter/http"
+	"github.com/go-kit/kit/tracing/zipkin"
+	opzipkin "github.com/openzipkin/zipkin-go"
+	"github.com/go-kit/kit/tracing/opentracing"
+	opentracing2 "github.com/opentracing/opentracing-go"
+	"github.com/go-kit/kit/log"
 )
 
 func main() {
 	conn, e := grpc.Dial(":8082", grpc.WithInsecure())
+	defer conn.Close()
 	if e != nil {
 		fmt.Println(e)
 		os.Exit(-1)
 	}
 
-	us := NewUserClient(conn)
+	reporter := http.NewReporter("http://192.168.3.125:9411/api/v2/spans")
+	defer reporter.Close()
+	zEP, _ := opzipkin.NewEndpoint("login", "localhost:8082")
+	zkTracer, err := opzipkin.NewTracer(reporter, opzipkin.WithLocalEndpoint(zEP))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	us := NewUserClient(conn, zkTracer)
 
 	req := pb.LoginReq{}
 	req.Username = "abc"
-	req.Pwd = "abc123"
+	req.Pwd = "123"
 
+	//span := zkTracer.StartSpan("call login")
+	//defer span.Finish()
 	res, e := us.Login(context.Background(), &req)
-
+	//span.Tag("res", res.String())
 	if e != nil {
 		fmt.Println(e)
+		//span.Tag("err", e.Error())
 		return
 	}
 
@@ -39,9 +57,25 @@ type UserClient struct {
 	LoginEndpoint endpoint.Endpoint
 }
 
-func NewUserClient(conn *grpc.ClientConn) pb.UserServer {
+func NewUserClient(conn *grpc.ClientConn, trace *opzipkin.Tracer) pb.UserServer {
 
-	loginEndpoint := kitgrpc.NewClient(conn, "pb.User", "Login", kit.NoEncodeRequestFunc, kit.NoDecodeResponseFunc, pb.LoginRes{}).Endpoint()
+	var logger log.Logger
+	logger = log.NewLogfmtLogger(os.Stderr)
+
+	zipkinClient := zipkin.GRPCClientTrace(trace)
+
+	zkClientTrace := zipkin.GRPCClientTrace(trace, zipkin.Name("Login"))
+
+	before := kitgrpc.ClientBefore(opentracing.ContextToGRPC(opentracing2.GlobalTracer(), logger))
+
+	// global client middlewares
+	options := []kitgrpc.ClientOption{
+		zipkinClient,
+		before,
+		zkClientTrace,
+	}
+
+	loginEndpoint := kitgrpc.NewClient(conn, "pb.User", "Login", kit.NoEncodeRequestFunc, kit.NoDecodeResponseFunc, pb.LoginRes{}, options...).Endpoint()
 
 	return &UserClient{LoginEndpoint: loginEndpoint}
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"google.golang.org/grpc"
+	_ "net/http/pprof"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/user/biz"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/user"
@@ -14,13 +15,13 @@ import (
 
 func main() {
 
-	logger := svr.NewLogger()
+	logger := svr.NewLogger("user")
 
-	service := biz.UserSvr{}
+	service := biz.UserSvr{Logger: logger}
 
 	endpoint := user.MakeLoginEndpoint(service)
 
-	svr.NewServerOptions(svr.UserSvrName, svr.UserSvrAddress, svr.Zipkinhttpurl, logger)
+	//svr.NewServerOptions(svr.UserSvrName, svr.UserSvrAddress, svr.Zipkinhttpurl, logger)
 
 	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc)
 

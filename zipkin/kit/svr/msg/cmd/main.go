@@ -14,13 +14,13 @@ import (
 
 func main() {
 
-	logger := svr.NewLogger()
+	//logger := svr.NewLogger("msg")
 
 	service := biz.MsgSvr{}
 
 	endpoint := msg.MakeUnReadEndpoint(service)
 
-	svr.NewServerOptions(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
+	//svr.NewServerOptions(svr.MsgSvrName, svr.MsgSvrAddress, svr.Zipkinhttpurl, logger)
 
 	server := kitgrpc.NewServer(endpoint, svr.NoDecodeRequestFunc, svr.NoEncodeResponseFunc)
 

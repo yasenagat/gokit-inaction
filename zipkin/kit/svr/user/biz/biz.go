@@ -8,16 +8,17 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"google.golang.org/grpc"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
-	"log"
+	"github.com/go-kit/kit/log"
 )
 
 type UserSvr struct {
+	Logger log.Logger
 }
 
 func (u UserSvr) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, error) {
 
 	res := pb.LoginRes{}
-	log.Println("req.Username", req.Username, "req.Pwd", req.Pwd)
+	u.Logger.Log("req.Username", req.Username, "req.Pwd", req.Pwd)
 	if req.Username == "admin" && req.Pwd == "123" {
 		body := pb.LoginResBody{}
 		body.Userid = "1"
@@ -89,6 +90,6 @@ func NewMsgClient(conn *grpc.ClientConn) pb.MsgServer {
 	//}
 
 	GetUnReadEndpoint := kitgrpc.NewClient(conn, "pb.Msg", "GetUnRead", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.UnReadRes{}, ).Endpoint()
-	log.Println(GetUnReadEndpoint)
+
 	return &MsgClient{GetUnReadEndpoint: GetUnReadEndpoint}
 }

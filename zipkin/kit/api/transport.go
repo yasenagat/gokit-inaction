@@ -5,7 +5,7 @@ import (
 	"golang.org/x/net/context"
 	"io/ioutil"
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 func DecodeLoginReq(ctx context.Context, r *http.Request) (request interface{}, err error) {
@@ -19,7 +19,7 @@ func DecodeLoginReq(ctx context.Context, r *http.Request) (request interface{}, 
 		return nil, e
 	}
 	if e := json.Unmarshal(bytes, &req); e != nil {
-		fmt.Println(e)
+		log.Println("DecodeLoginReq", e)
 		return nil, e
 	}
 	return req, nil
@@ -30,6 +30,7 @@ func EncodeRes(ctx context.Context, writer http.ResponseWriter, i interface{}) e
 	bytes, e := json.Marshal(i)
 
 	if e != nil {
+		log.Println("EncodeRes", e)
 		return e
 	}
 

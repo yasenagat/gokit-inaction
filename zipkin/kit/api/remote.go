@@ -7,9 +7,16 @@ import (
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
 	"golang.org/x/net/context"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"fmt"
+	"github.com/go-kit/kit/log"
 )
 
+func NewRemote(logger log.Logger) Remote {
+	return Remote{logger}
+}
+
+type Remote struct {
+	logger log.Logger
+}
 type UserClient struct {
 	LoginEndpoint endpoint.Endpoint
 }
@@ -23,11 +30,11 @@ func (c UserClient) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, 
 	return res.(*pb.LoginRes), nil
 }
 
-func NewUserClient() (pb.UserServer, error) {
+func (r Remote) NewUserClient() (pb.UserServer, error) {
 
 	conn, e := grpc.Dial(svr.UserSvrAddress, grpc.WithInsecure())
 	if e != nil {
-		fmt.Println(e)
+		r.logger.Log("error", e)
 		return &UserClient{}, e
 	}
 	LoginEndpoint := kitgrpc.NewClient(conn, "pb.User", "Login", svr.NoEncodeRequestFunc, svr.NoDecodeResponseFunc, pb.LoginRes{}).Endpoint()

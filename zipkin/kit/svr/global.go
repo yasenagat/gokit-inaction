@@ -14,11 +14,13 @@ var MsgSvrAddress = ":9988"
 var UserSvrAddress = ":9977"
 var UserSvrName = "UserSvr"
 
-var Zipkinhttpurl = "http://localhost:9411/api/v1/spans"
+//var Zipkinhttpurl = "http://localhost:9411/api/v1/spans"
+var Zipkinhttpurl = "http://192.168.3.125:9411/api/v1/spans"
 
-func NewLogger() log.Logger {
+func NewLogger(servicename string) log.Logger {
 	var logger log.Logger
 	logger = log.NewLogfmtLogger(os.Stderr)
+	logger = log.WithPrefix(logger, "service", servicename)
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	logger = log.With(logger, "caller", log.DefaultCaller)
 	return logger
@@ -34,7 +36,11 @@ func NewZipkinTracer(serviceName, hostPort, zipkinhttpurl string, logger log.Log
 			reporter      = zipkinhttp.NewReporter(zipkinhttpurl)
 		)
 		defer reporter.Close()
-		zEP, _ := zipkin.NewEndpoint(serviceName, hostPort)
+		zEP, err := zipkin.NewEndpoint(serviceName, "localhost:80")
+		if err != nil {
+			logger.Log("err", err)
+			os.Exit(1)
+		}
 		zipkinTracer, err = zipkin.NewTracer(
 			reporter, zipkin.WithLocalEndpoint(zEP), zipkin.WithNoopTracer(useNoopTracer),
 		)
@@ -50,8 +56,8 @@ func NewZipkinTracer(serviceName, hostPort, zipkinhttpurl string, logger log.Log
 	return zipkinTracer
 }
 
-func NewServerOptions(serviceName, hostPort, zipkinhttpurl string, logger log.Logger) []transporthttp.ServerOption {
-	tracer := NewZipkinTracer(serviceName, hostPort, zipkinhttpurl, logger)
+func NewServerOptions(tracer *zipkin.Tracer, logger log.Logger) []transporthttp.ServerOption {
+
 	zipkinServer := kitzipkin.HTTPServerTrace(tracer)
 	options := []transporthttp.ServerOption{
 		transporthttp.ServerErrorLogger(logger),

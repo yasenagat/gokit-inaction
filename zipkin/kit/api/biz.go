@@ -1,27 +1,27 @@
 package api
 
 import (
-	"log"
-	"fmt"
 	"golang.org/x/net/context"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
+	"github.com/go-kit/kit/log"
 )
 
 type ApiSvr struct {
+	Logger log.Logger
 }
 
 func (svr ApiSvr) Login(req ReqLogin) (ResLogin, error) {
 
-	log.Println(req.Username, req.Pwd)
+	svr.Logger.Log(req.Username, req.Pwd)
 
 	res := ResLogin{}
 
 	//call rpc start
 
-	userClient, e := NewUserClient()
+	userClient, e := NewRemote(svr.Logger).NewUserClient()
 
 	if e != nil {
-		fmt.Println(e)
+		svr.Logger.Log("error", e)
 		res.Msg = e.Error()
 		res.Code = -1
 		res.UID = "-1"
@@ -35,7 +35,7 @@ func (svr ApiSvr) Login(req ReqLogin) (ResLogin, error) {
 	loginRes, e := userClient.Login(context.Background(), &r)
 
 	if e != nil {
-		fmt.Println(e)
+		svr.Logger.Log("error", e)
 		res.Msg = e.Error()
 		res.Code = -1
 		res.UID = "-1"
