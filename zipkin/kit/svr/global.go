@@ -16,8 +16,8 @@ var MsgSvrAddress = "localhost:9988"
 var UserSvrAddress = "localhost:9977"
 var UserSvrName = "usersvr"
 
-var Zipkinhttpurl = "http://localhost:9411/api/v2/spans"
-//var Zipkinhttpurl = "http://192.168.3.125:9411/api/v2/spans"
+//var Zipkinhttpurl = "http://localhost:9411/api/v2/spans"
+var Zipkinhttpurl = "http://192.168.3.125:9411/api/v2/spans"
 
 func NewLogger(servicename string) log.Logger {
 	var logger log.Logger

@@ -25,8 +25,6 @@ func main() {
 
 	logger := svr.NewLogger("api")
 
-
-
 	var zipkinTracerUserSvr *zipkin.Tracer
 	{
 		var (
@@ -59,7 +57,6 @@ func main() {
 	userClient := api.NewRemote(logger, zipkinTracerUserSvr).NewUserClient(conn)
 
 	ser := api.ApiSvr{Logger: logger, UserClient: userClient}
-
 
 	var zipkinTracerApiSvr *zipkin.Tracer
 	{

@@ -39,6 +39,7 @@ myEndpoint = zipkin.TraceEndpoint(zipkinTracer, "getlock")(myEndpoint)
 myEndpoint = GetLock(myEndpoint)
 
 ````
+
 注意:可以只有http或者grpc的trace，没有endpoint的trace，也就是说endpoint不是必须的。
 
 2. #### trace业务
@@ -67,7 +68,7 @@ if span != nil {
 }
 ```
 
-####注意
+#### 注意
 
 >业务接口中一定要带入ctx
 否则无法连接父span，也不能做业务的trace了。
@@ -88,6 +89,8 @@ $ go run kit/svr/msg/cmd/main.go
 $ curl -X POST "http://localhost:8888/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"username\": \"admin\",\"pwd\":\"123\"}"
 {"code":0,"unread":2,"msg":"登录成功","uid":"1"}
 ```
+
+>* 访问zipkin http://localhost:9411
 
 
 
