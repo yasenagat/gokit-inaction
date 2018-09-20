@@ -1,25 +1,43 @@
 package main
 
 import (
+	kithttp "github.com/go-kit/kit/transport/http"
+	"golang.org/x/net/context"
+	"net/http"
+	"github.com/hashicorp/consul/api"
 	"github.com/go-kit/kit/log"
 	"os"
-	"github.com/hashicorp/consul/api"
 	"github.com/go-kit/kit/sd/consul"
 	"flag"
-	"github.com/go-kit/kit/sd"
-	"github.com/go-kit/kit/endpoint"
-	"io"
-	kithttp "github.com/go-kit/kit/transport/http"
-	"net/url"
-	"net/http"
-	"golang.org/x/net/context"
-	"github.com/go-kit/kit/sd/lb"
 	"io/ioutil"
+	"github.com/go-kit/kit/endpoint"
 	"strings"
+	"github.com/go-kit/kit/sd/lb"
+	"github.com/go-kit/kit/sd"
+	"io"
+	"net/url"
 	"time"
 )
 
 func main() {
+
+	endpoint := newEndpoint()
+	s := kithttp.NewServer(func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		return endpoint(ctx, request)
+	}, func(i context.Context, req *http.Request) (request interface{}, err error) {
+		return nil, nil
+	}, func(i context.Context, writer http.ResponseWriter, v interface{}) error {
+
+		if r, ok := v.(string); ok {
+			io.WriteString(writer, r)
+		}
+		return nil
+	})
+
+	http.ListenAndServe(":7777", s)
+}
+
+func newEndpoint() endpoint.Endpoint {
 
 	var logger log.Logger
 	{
@@ -43,7 +61,7 @@ func main() {
 
 	kitc := consul.NewClient(c)
 
-	instancer := consul.NewInstancer(kitc, logger, "time server", nil, true)
+	instancer := consul.NewInstancer(kitc, logger, "TimeSvr", nil, true)
 
 	endpointer := sd.NewEndpointer(instancer, func(instance string) (endpoint.Endpoint, io.Closer, error) {
 		logger.Log("instance", instance)
@@ -75,20 +93,5 @@ func main() {
 	balancer := lb.NewRoundRobin(endpointer)
 
 	retry := lb.Retry(3, 5000*time.Millisecond, balancer)
-
-	for i := 0; i < 3; i++ {
-		//end, e := balancer.Endpoint()
-		//if e != nil {
-		//	logger.Log("err", e)
-		//}
-		//res, e := end(context.Background(), nil)
-		res, e := retry(context.Background(), i)
-
-		if e != nil {
-			logger.Log("[err]", e)
-		}
-
-		logger.Log("res", res)
-	}
-
+	return retry
 }

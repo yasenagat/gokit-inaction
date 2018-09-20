@@ -67,3 +67,6 @@
 >一共5台机器，A,B上部署我们自己service，比如登录，注册各种服务都在,A,B上跑，同时A,B上启动consul client提供sd的功能。
 >D,E,F以cluster的方式运行 consul server。
 
+>通常client比server数量多很多，client和server都可以动态添加。
+server也要保证一定的数量，因为最终数据存储在server，server提供最终的sd服务。
+
