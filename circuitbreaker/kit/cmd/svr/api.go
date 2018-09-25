@@ -27,7 +27,7 @@ func main() {
 	errc := make(chan error)
 
 	r := mux.NewRouter()
-	svr := transporthttp.NewServer(kit.NewCbEndpoint("/n", NewRemoteEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
+	svr := transporthttp.NewServer(kit.NewHystrixEndpoint("/n", NewRemoteEndPoint), func(_ context.Context, req *http.Request) (request interface{}, err error) {
 		n := Number{}
 		e := json.NewDecoder(req.Body).Decode(&n)
 		return n, e
@@ -101,6 +101,7 @@ func RemoteCall(ctx context.Context, request interface{}) (Number, error) {
 		log.Println("StatusCode", res.StatusCode)
 
 		if res.StatusCode != http.StatusOK {
+
 			return nil, errors.New(string(b) + " => " + res.Status)
 		}
 

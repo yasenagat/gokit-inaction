@@ -6,6 +6,8 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"log"
 	"time"
+	"github.com/afex/hystrix-go/hystrix"
+	"golang.org/x/net/context"
 )
 
 func NewCbEndpoint(name string, endpoint endpoint.Endpoint) endpoint.Endpoint {
@@ -28,4 +30,22 @@ func NewCbEndpoint(name string, endpoint endpoint.Endpoint) endpoint.Endpoint {
 		}
 	}
 	return circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(s))(endpoint)
+}
+
+func NewHystrixEndpoint(name string, end endpoint.Endpoint) endpoint.Endpoint {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			var resp interface{}
+			if err := hystrix.Do(name, func() (err error) {
+				resp, err = next(ctx, request)
+				return err
+			}, func(e error) error {
+				log.Println("e", e)
+				return e
+			}); err != nil {
+				return nil, err
+			}
+			return resp, nil
+		}
+	}(end)
 }
