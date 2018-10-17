@@ -1,0 +1,15 @@
+{
+  "datacenter": "yasenagat-dc",
+  "data_dir": "./consuldata",
+  "log_level": "INFO",
+  "node_name": "yase-mac",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 3,
+  "client_addr": "0.0.0.0",
+  "bootstrap": true,
+  "bind_addr": "192.168.10.40",
+  "retry_join": [
+    "192.168.3.125"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "datacenter": "yasenagat-dc",
+  "data_dir": "./consuldata",
+  "log_level": "INFO",
+  "node_name": "yase-2",
+  "server": true,
+  "bind_addr": "192.168.10.208",
+  "retry_join": [
+    "192.168.3.125"
+  ]
+}

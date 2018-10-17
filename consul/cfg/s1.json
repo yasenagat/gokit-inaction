@@ -1,0 +1,11 @@
+{
+  "datacenter": "yasenagat-dc",
+  "data_dir": "./consuldata",
+  "log_level": "INFO",
+  "node_name": "yase-1",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 3,
+  "bind_addr": "192.168.3.125",
+  "client_addr": "0.0.0.0"
+}

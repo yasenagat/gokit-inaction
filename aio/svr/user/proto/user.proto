@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+service User {
+    rpc Login (LoginReq) returns (LoginRes) {
+    }
+}
+
+message LoginReq {
+    string username = 1;
+    string pwd = 2;
+}
+
+message LoginResBody {
+    string userid = 1;
+    string sid = 2;
+}
+
+message LoginRes {
+    int64 code = 1;
+    string msg = 2;
+    LoginResBody body = 3;
+}
+

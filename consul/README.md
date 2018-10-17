@@ -53,13 +53,13 @@
     * B上的user svr,account svr，通过B本地的consul client注册。
 
 
-#### 部署
+#### 部署 (2 client，3 server)
 
 * 2 consul client
     * A 
         * A join D,E,F或者其中任意一个。(如果是任意一个，启动时候要可用，比如join E，E要可用。启动后如果E挂了，并不影响，因为已经通过E join上了D,F)
     * B 同上
-* 3 consul server 也就是cluster
+* 3 consul server (cluester)
     * D join E,F
     * E join D,F
     * F join D,E
