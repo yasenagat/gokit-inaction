@@ -1,13 +1,13 @@
 package user
 
 import (
-	"net/http"
 	"encoding/json"
 	"github.com/go-kit/kit/log"
 	transporthttp "github.com/go-kit/kit/transport/http"
-	"golang.org/x/net/context"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"golang.org/x/net/context"
+	"net/http"
 )
 
 //type UserHandler struct {
@@ -27,7 +27,6 @@ func MakeHandler(logger log.Logger, userEndpoint *UserEndpoint, r *mux.Router) *
 	loginHandler := transporthttp.NewServer(userEndpoint.Login, DecodeLoginReq(logger), der, opts...)
 	updatePhoneHandler := transporthttp.NewServer(userEndpoint.UpdatePhone, DecodeUpdatePhoneReq(logger), der, opts...)
 	getUserHandler := transporthttp.NewServer(userEndpoint.GetUser, DecodeGetUserReq(logger), der, opts...)
-
 	r.Handle("/login", loginHandler)
 	r.Handle("/phone", updatePhoneHandler)
 	r.Handle("/user", getUserHandler)

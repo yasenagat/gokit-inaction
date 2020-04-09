@@ -1,9 +1,9 @@
 package biz
 
 import (
-	"golang.org/x/net/context"
-	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/pb"
 	"fmt"
+	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/pb"
+	"golang.org/x/net/context"
 	hv1 "google.golang.org/grpc/health/grpc_health_v1"
 	"net"
 )
@@ -18,7 +18,7 @@ func (UserServer) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, er
 
 	ip, _ := getIp()
 	fmt.Println("ip", ip)
-	if (req.Username == "abc" && req.Pwd == "123") {
+	if req.Username == "abc" && req.Pwd == "123" {
 		res.Code = 0
 		res.Msg = ip + "=登录成功"
 	} else {

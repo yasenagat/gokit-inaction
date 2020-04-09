@@ -5,11 +5,11 @@ import (
 	"github.com/opentracing/opentracing-go"
 
 	zipkin "github.com/openzipkin-contrib/zipkin-go-opentracing"
-	"log"
+	"github.com/openzipkin/zipkin-go-opentracing"
 	"github.com/pkg/errors"
+	"log"
 	"math/rand"
 	"os"
-	"github.com/openzipkin/zipkin-go-opentracing"
 	"time"
 )
 

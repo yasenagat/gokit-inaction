@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/streadway/handy/breaker"
-	"fmt"
-	"log"
 	"errors"
+	"fmt"
+	"github.com/streadway/handy/breaker"
+	"log"
 	"time"
 )
 

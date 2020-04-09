@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/go-kit/kit/endpoint"
-	"golang.org/x/net/context"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 )
 
 func MakeLoginEndpoint(api Api) endpoint.Endpoint {

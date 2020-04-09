@@ -1,19 +1,19 @@
 package main
 
 import (
-	kithttp "github.com/go-kit/kit/transport/http"
-	"golang.org/x/net/context"
-	"net/http"
-	yt "gitee.com/godY/tcgetway/time"
-	"github.com/hashicorp/consul/api"
-	"log"
-	"os"
-	"github.com/go-kit/kit/sd/consul"
 	"flag"
-	"io"
-	"time"
+	yt "gitee.com/godY/tcgetway/time"
+	"github.com/go-kit/kit/sd/consul"
+	kithttp "github.com/go-kit/kit/transport/http"
+	"github.com/hashicorp/consul/api"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
+	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"time"
 )
 
 //nohup ./time -checkhttpurl=http://192.168.3.125:14444 -consul.regist.addr=http://192.168.3.125 -id=ts125 >time.out &

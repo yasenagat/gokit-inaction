@@ -4,9 +4,9 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 
+	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/pkg/errors"
-	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
 )
 
 func MakeUnReadEndpoint(server pb.MsgServer) endpoint.Endpoint {

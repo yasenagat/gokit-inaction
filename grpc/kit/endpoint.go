@@ -1,11 +1,11 @@
 package kit
 
 import (
-	"github.com/go-kit/kit/endpoint"
-	"golang.org/x/net/context"
 	"gitee.com/godY/gokit-inaction/grpc/pb"
+	"github.com/go-kit/kit/endpoint"
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 )
 
 func MakeLoginEndpoint(server pb.UserServer) endpoint.Endpoint {

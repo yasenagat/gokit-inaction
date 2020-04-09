@@ -1,14 +1,14 @@
 package main
 
 import (
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"google.golang.org/grpc"
 	"fmt"
-	"os"
 	"gitee.com/godY/gokit-inaction/grpc/kit"
 	"gitee.com/godY/gokit-inaction/grpc/pb"
-	"golang.org/x/net/context"
 	"github.com/go-kit/kit/endpoint"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"os"
 )
 
 func main() {

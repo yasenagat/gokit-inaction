@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/go-kit/kit/log"
-	"os"
 	kithttp "github.com/go-kit/kit/transport/http"
-	"net/url"
-	"net/http"
 	"golang.org/x/net/context"
 	"io/ioutil"
-	"strings"
+	"net/http"
+	"net/url"
+	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {

@@ -1,14 +1,14 @@
 package user
 
 import (
-	"net/http"
-	"golang.org/x/net/context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"github.com/go-kit/kit/log"
 	"git.oschina.net/janpoem/go-logger.git"
+	"github.com/go-kit/kit/log"
 	"github.com/google/uuid"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
 	"strings"
 )
 

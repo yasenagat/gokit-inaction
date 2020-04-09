@@ -2,13 +2,13 @@ package user
 
 import (
 	"github.com/go-kit/kit/endpoint"
-	"golang.org/x/net/context"
-	"github.com/pkg/errors"
-	"github.com/juju/ratelimit"
-	"time"
-	kitlimit "github.com/go-kit/kit/ratelimit"
-	"golang.org/x/time/rate"
 	"github.com/go-kit/kit/log"
+	kitlimit "github.com/go-kit/kit/ratelimit"
+	"github.com/juju/ratelimit"
+	"github.com/pkg/errors"
+	"golang.org/x/net/context"
+	"golang.org/x/time/rate"
+	"time"
 )
 
 const RATELIMIT = 100

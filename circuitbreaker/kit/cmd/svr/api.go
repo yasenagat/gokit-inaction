@@ -1,18 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"golang.org/x/net/context"
-	"encoding/json"
-	"github.com/pkg/errors"
-	"log"
-	"net/url"
-	"gitee.com/godY/gokit-inaction/circuitbreaker/kit"
-	"io/ioutil"
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"gitee.com/godY/gokit-inaction/circuitbreaker/kit"
+	transporthttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 )
 
 type Number struct {

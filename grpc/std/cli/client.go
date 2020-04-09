@@ -1,10 +1,10 @@
 package main
 
 import (
-	"gitee.com/godY/gokit-inaction/grpc/pb"
-	"google.golang.org/grpc"
 	"fmt"
+	"gitee.com/godY/gokit-inaction/grpc/pb"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 func main() {

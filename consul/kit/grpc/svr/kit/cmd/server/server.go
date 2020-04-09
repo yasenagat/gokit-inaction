@@ -1,20 +1,20 @@
 package main
 
 import (
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/biz"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"net"
 	"os"
 
-	"google.golang.org/grpc"
-	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/pb"
+	"flag"
 	"fmt"
 	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/kit"
-	"github.com/hashicorp/consul/api"
-	"log"
+	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/pb"
 	"github.com/go-kit/kit/sd/consul"
-	"flag"
+	"github.com/hashicorp/consul/api"
+	"google.golang.org/grpc"
 	hv1 "google.golang.org/grpc/health/grpc_health_v1"
+	"log"
 )
 
 //nohup ./usersvr -svr.reg.check=192.168.10.210:15555 -svr.reg.addr=192.168.10.210 > usersvr.out &

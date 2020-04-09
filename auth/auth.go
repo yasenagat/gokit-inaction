@@ -1,16 +1,16 @@
 package main
 
 import (
-	kithttp "github.com/go-kit/kit/transport/http"
-	"github.com/go-kit/kit/auth/basic"
-	"net/http"
-	"golang.org/x/net/context"
-	"io"
-	"time"
+	"bytes"
 	"encoding/base64"
 	"fmt"
+	"github.com/go-kit/kit/auth/basic"
+	kithttp "github.com/go-kit/kit/transport/http"
+	"golang.org/x/net/context"
+	"io"
+	"net/http"
 	"strings"
-	"bytes"
+	"time"
 )
 
 //Basic eWFzZToxMjM0NTY=

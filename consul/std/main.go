@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
 	"log"
 	"strconv"
-	"github.com/google/uuid"
 )
 
 const svrname = "newsvr"
@@ -84,7 +84,7 @@ func getSvr(e error, agent *api.Agent) {
 
 func registSvr(c *api.Client, e error) (*api.Agent, error) {
 	agent := c.Agent()
-	e = agent.ServiceRegister(&api.AgentServiceRegistration{ID: uuid.New().String(),Name: svrname, Port: 30000, Address: "192.168.10.208", Check: &api.AgentServiceCheck{HTTP: "http://192.168.10.208:30000/health", Interval: "2s"}})
+	e = agent.ServiceRegister(&api.AgentServiceRegistration{ID: uuid.New().String(), Name: svrname, Port: 30000, Address: "192.168.10.208", Check: &api.AgentServiceCheck{HTTP: "http://192.168.10.208:30000/health", Interval: "2s"}})
 	if e != nil {
 		log.Println(e)
 	}

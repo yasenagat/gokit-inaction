@@ -1,4 +1,3 @@
-
 // Package user User API.
 //
 // the purpose of this application is to provide an application
@@ -28,14 +27,14 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
 	"gitee.com/godY/gokit-inaction/user"
 	"github.com/go-kit/kit/log"
-	"os"
 	"github.com/gorilla/mux"
+	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
-	"fmt"
 )
 
 //curl -X POST "http://localhost:8080/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"Tom\", \"Pwd\": \"123456\"}"

@@ -1,23 +1,23 @@
 package main
 
 import (
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"net/http"
-	"golang.org/x/net/context"
-	"github.com/go-kit/kit/ratelimit"
-	"golang.org/x/time/rate"
-	"time"
-	"math/rand"
-	"github.com/pkg/errors"
-	rl "github.com/juju/ratelimit"
-	"github.com/go-kit/kit/endpoint"
 	"fmt"
+	"github.com/go-kit/kit/endpoint"
+	"github.com/go-kit/kit/ratelimit"
+	transporthttp "github.com/go-kit/kit/transport/http"
+	rl "github.com/juju/ratelimit"
+	"github.com/pkg/errors"
+	"golang.org/x/net/context"
+	"golang.org/x/time/rate"
+	"math/rand"
+	"net/http"
+	"time"
 )
 
 //curl -X POST "http://localhost:8080/hello"
 func main() {
 
-	helloHandler := transporthttp.NewServer(ratelimit.NewErroringLimiter(rate.NewLimiter(rate.Every(time.Second), 20))(func(ctx context.Context, request interface{}) (interface{}, error) {
+	helloHandler := transporthttp.NewServer(ratelimit.NewErroringLimiter(rate.NewLimiter(rate.Every(60*time.Second), 5))(func(ctx context.Context, request interface{}) (interface{}, error) {
 
 		if rand.Intn(10) > 5 {
 			if r, ok := request.(string); ok {

@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"golang.org/x/net/context"
 	"encoding/json"
-	"log"
+	"fmt"
+	transporthttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 	"io"
+	"log"
+	"net/http"
 )
 
 type Number struct {

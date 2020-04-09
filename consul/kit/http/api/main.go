@@ -1,21 +1,21 @@
 package main
 
 import (
-	kithttp "github.com/go-kit/kit/transport/http"
-	"golang.org/x/net/context"
-	"net/http"
-	"github.com/hashicorp/consul/api"
-	"github.com/go-kit/kit/log"
-	"os"
-	"github.com/go-kit/kit/sd/consul"
 	"flag"
-	"io/ioutil"
 	"github.com/go-kit/kit/endpoint"
-	"strings"
-	"github.com/go-kit/kit/sd/lb"
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
+	"github.com/go-kit/kit/sd/consul"
+	"github.com/go-kit/kit/sd/lb"
+	kithttp "github.com/go-kit/kit/transport/http"
+	"github.com/hashicorp/consul/api"
+	"golang.org/x/net/context"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"net/url"
+	"os"
+	"strings"
 	"time"
 )
 

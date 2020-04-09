@@ -1,12 +1,13 @@
 package main
 
 import (
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"net/http"
-	"golang.org/x/net/context"
 	"fmt"
+	transporthttp "github.com/go-kit/kit/transport/http"
 	"github.com/google/uuid"
+	"golang.org/x/net/context"
+	"net/http"
 )
+
 //curl -X POST "http://localhost:8081/concat" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"A\": \"admin\",\"B\":\"123\"}"
 type User struct {
 	Id string
@@ -109,7 +110,7 @@ func main() {
 		return nil
 	}, transporthttp.ServerBefore(transporthttp.PopulateRequestContext, CreateMsgId))
 	http.Handle("/", server)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8081", nil)
 }
 
 func CreateMsgId(i context.Context, request *http.Request) context.Context {

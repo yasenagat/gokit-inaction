@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/sony/gobreaker"
-	"math/rand"
 	"github.com/pkg/errors"
+	"github.com/sony/gobreaker"
 	"log"
+	"math/rand"
 	"strconv"
 	"time"
 )

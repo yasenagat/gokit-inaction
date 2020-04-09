@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
-	"flag"
 	"encoding/json"
-	"io"
-	"github.com/google/uuid"
-	"github.com/hashicorp/consul/api"
-	"log"
+	"flag"
 	"gitee.com/godY/gokit-inaction/consul/std/user"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"github.com/hashicorp/consul/api"
+	"io"
+	"log"
+	"net/http"
 )
 
 var DB = make(map[string]user.User)
@@ -100,7 +100,7 @@ func main() {
 	}
 }
 
-func RegSvr(c *api.Client, name, address, checkhttpurl, id string, port int) (error) {
+func RegSvr(c *api.Client, name, address, checkhttpurl, id string, port int) error {
 	agent := c.Agent()
 	return agent.ServiceRegister(&api.AgentServiceRegistration{ID: id, Name: name, Port: port, Address: address, Check: &api.AgentServiceCheck{HTTP: checkhttpurl, Interval: "2s"}})
 }

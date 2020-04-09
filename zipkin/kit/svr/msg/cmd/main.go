@@ -1,17 +1,17 @@
 package main
 
 import (
-	"net"
 	"fmt"
-	"os"
-	"google.golang.org/grpc"
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg/biz"
-	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
+	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg"
+	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/msg/biz"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"github.com/openzipkin/zipkin-go"
 	openzipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
+	"google.golang.org/grpc"
+	"net"
+	"os"
 )
 
 func main() {

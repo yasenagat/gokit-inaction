@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "comm.proto";
+
+package pro;
+
+service User {
+    rpc Login (LoginReq) returns (LoginRes) {
+    }
+}
+
+
+
+message LoginReq {
+    RequestHeader header = 1;
+    string username = 2;
+    string pwd = 3;
+}
+
+message LoginRes {
+    ResponseHeader header = 1;
+    string userid = 2;
+    string sid = 3;
+}
+

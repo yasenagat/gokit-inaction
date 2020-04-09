@@ -1,15 +1,15 @@
 package main
 
 import (
-	"net/http"
-	"log"
-	"github.com/hashicorp/consul/api"
-	"os"
-	"gitee.com/godY/gokit-inaction/consul/std/user"
-	"strconv"
-	"io/ioutil"
 	"encoding/json"
+	"gitee.com/godY/gokit-inaction/consul/std/user"
 	"github.com/google/uuid"
+	"github.com/hashicorp/consul/api"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
 	"strings"
 )
 

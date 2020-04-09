@@ -3,8 +3,8 @@ package user
 import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	"time"
 	"sync"
+	"time"
 )
 
 var Users = make(map[string]User, 10)
@@ -20,7 +20,7 @@ func CheckLogin(username, pwd string) (User, error) {
 
 	for _, v := range Users {
 
-		if (v.Username == username && v.Pwd == pwd) {
+		if v.Username == username && v.Pwd == pwd {
 			return v, nil
 		}
 	}

@@ -1,14 +1,14 @@
 package api
 
 import (
-	"github.com/go-kit/kit/endpoint"
-	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
-	"google.golang.org/grpc"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
-	"golang.org/x/net/context"
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
+	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
+	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"github.com/openzipkin/zipkin-go"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 func NewRemote(logger log.Logger, zipkinTracer *zipkin.Tracer) Remote {
@@ -32,7 +32,7 @@ func (c UserClient) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes, 
 	return res.(*pb.LoginRes), nil
 }
 
-func (r Remote) NewUserClient(conn *grpc.ClientConn) (pb.UserServer) {
+func (r Remote) NewUserClient(conn *grpc.ClientConn) pb.UserServer {
 
 	opts := svr.NewGrpcClientOptions(r.zipkinTracer, "", r.logger)
 

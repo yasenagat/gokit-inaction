@@ -1,19 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/api"
-	_ "net/http/pprof"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr"
+	"github.com/go-kit/kit/log"
+	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
+	transporthttp "github.com/go-kit/kit/transport/http"
+	"github.com/gorilla/mux"
 	"github.com/openzipkin/zipkin-go"
 	openzipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
-	"os"
-	"github.com/go-kit/kit/log"
-	"net/http"
-	"fmt"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
-	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
+	"net/http"
+	_ "net/http/pprof"
+	"os"
 )
 
 //curl -X POST "http://localhost:8888/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"username\": \"admin\",\"pwd\":\"123\"}"

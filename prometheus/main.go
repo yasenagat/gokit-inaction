@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
+	transporthttp "github.com/go-kit/kit/transport/http"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
-	"net/http"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/net/context"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	"time"
 	"math/rand"
-	"fmt"
+	"net/http"
+	"time"
 )
 
 func main() {

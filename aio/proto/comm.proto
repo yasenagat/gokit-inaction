@@ -1,0 +1,12 @@
+syntax = "proto3";
+package pro;
+
+message RequestHeader {
+    string msgid = 1;
+}
+
+message ResponseHeader {
+    int64 code = 1;
+    string msg = 2;
+}
+

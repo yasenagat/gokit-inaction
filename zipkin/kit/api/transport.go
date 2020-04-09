@@ -1,11 +1,11 @@
 package api
 
 import (
-	"net/http"
+	"encoding/json"
 	"golang.org/x/net/context"
 	"io/ioutil"
-	"encoding/json"
 	"log"
+	"net/http"
 )
 
 func DecodeLoginReq(ctx context.Context, r *http.Request) (request interface{}, err error) {

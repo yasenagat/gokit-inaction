@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pro;
+
+import "comm.proto";
+
+service Account {
+    rpc GetAccount (GetAccountReq) returns (GetAccountRes) {
+    }
+}
+
+message GetAccountReq {
+    RequestHeader header = 1;
+    string sid = 2;
+}
+
+message GetAccountRes {
+    ResponseHeader header = 1;
+    int64 balance = 2;
+}
+

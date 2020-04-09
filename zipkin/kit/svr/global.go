@@ -1,14 +1,14 @@
 package svr
 
 import (
-	"os"
+	"gitee.com/godY/tcgetway/time"
 	"github.com/go-kit/kit/log"
+	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
+	transportgrpc "github.com/go-kit/kit/transport/grpc"
+	transporthttp "github.com/go-kit/kit/transport/http"
 	"github.com/openzipkin/zipkin-go"
 	zipkinhttp "github.com/openzipkin/zipkin-go/reporter/http"
-	transporthttp "github.com/go-kit/kit/transport/http"
-	transportgrpc "github.com/go-kit/kit/transport/grpc"
-	kitzipkin "github.com/go-kit/kit/tracing/zipkin"
-	"gitee.com/godY/tcgetway/time"
+	"os"
 )
 
 var MsgSvrName = "msgsvr"

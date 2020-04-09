@@ -1,21 +1,21 @@
 package main
 
 import (
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"google.golang.org/grpc"
+	"flag"
 	"fmt"
-	"os"
 	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/kit"
 	"gitee.com/godY/gokit-inaction/consul/kit/grpc/svr/pb"
-	"golang.org/x/net/context"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
-	"flag"
-	"github.com/hashicorp/consul/api"
-	"github.com/go-kit/kit/sd/consul"
 	"github.com/go-kit/kit/sd"
-	"io"
+	"github.com/go-kit/kit/sd/consul"
 	"github.com/go-kit/kit/sd/lb"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
+	"github.com/hashicorp/consul/api"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"io"
+	"os"
 	"time"
 )
 

@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"github.com/afex/hystrix-go/hystrix"
-	"time"
 	"log"
+	"time"
 )
 
 func main() {

@@ -1,13 +1,13 @@
 package kit
 
 import (
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/go-kit/kit/circuitbreaker"
-	"github.com/sony/gobreaker"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/sony/gobreaker"
+	"golang.org/x/net/context"
 	"log"
 	"time"
-	"github.com/afex/hystrix-go/hystrix"
-	"golang.org/x/net/context"
 )
 
 func NewCbEndpoint(name string, endpoint endpoint.Endpoint) endpoint.Endpoint {

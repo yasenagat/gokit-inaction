@@ -1,11 +1,11 @@
 package user
 
 import (
-	"github.com/go-kit/kit/endpoint"
-	"golang.org/x/net/context"
 	"gitee.com/godY/gokit-inaction/zipkin/kit/svr/pro"
-	"github.com/pkg/errors"
+	"github.com/go-kit/kit/endpoint"
 	grpctransport "github.com/go-kit/kit/transport/grpc"
+	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 )
 
 func MakeLoginEndpoint(svr pb.UserServer) endpoint.Endpoint {

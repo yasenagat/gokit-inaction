@@ -1,15 +1,15 @@
 package main
 
 import (
-	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"gitee.com/godY/gokit-inaction/grpc/biz"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
 	"net"
 	"os"
 
-	"google.golang.org/grpc"
-	"gitee.com/godY/gokit-inaction/grpc/pb"
 	"fmt"
 	"gitee.com/godY/gokit-inaction/grpc/kit"
+	"gitee.com/godY/gokit-inaction/grpc/pb"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	
+
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(kitgrpc.Interceptor))
 
 	pb.RegisterUserServer(grpcServer, userHandler)

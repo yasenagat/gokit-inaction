@@ -2,9 +2,9 @@ package user
 
 import (
 	"github.com/go-kit/kit/metrics"
-	"time"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
+	"time"
 )
 
 type metricsMW struct {
@@ -42,7 +42,7 @@ func (m metricsMW) Login(username, pwd string) (User, error) {
 	}(time.Now())
 	return m.Service.Login(username, pwd)
 }
-func (m metricsMW) UpdatePhone(username, phone string) (error) {
+func (m metricsMW) UpdatePhone(username, phone string) error {
 	defer func(start time.Time) {
 		m.requestCount.With(METHOD, "user_UpdatePhone").Add(1)
 		m.requestLatency.With(METHOD, "user_UpdatePhone").Observe(time.Since(start).Seconds())
